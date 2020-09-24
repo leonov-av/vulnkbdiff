@@ -1,6 +1,6 @@
-# VulnKBdiff
+# VulnKBdiff - Vulnerability Knowledge Base comparison tool
 
-Vulnerability Knowledge Base comparison tool.  It makes CVE-based comparison for Nessus, OpenVAS and NVD. You can see the results in my [telegram channel](https://t.me/avleonovcom/777). 
+VulnKBdiff makes CVE-based comparison for Nessus, OpenVAS and NVD. You can see the results in my [telegram channel](https://t.me/avleonovcom/777). 
 
 **WARNING!!!** The only catch is that I am getting Nessus CVEs from [Vulners collection](https://vulners.com/stats), NOT from NASL plugins. This means that you will need to have your own commercial/researcher Vulners license for this. ¯\\\_(ツ)_/¯ If you are interested in such license contact isox@vulners.com.
 
