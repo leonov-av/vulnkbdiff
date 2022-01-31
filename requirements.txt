@@ -1,0 +1,4 @@
+eventlet
+matplotlib
+matplotlib-venn
+bigjson
