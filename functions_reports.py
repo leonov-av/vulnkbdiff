@@ -2,10 +2,12 @@
 import functions_vulners
 import functions_nvd
 import functions_openvas
+import functions_cve_sets
 from pylab import *
 import re
 import json
 import time
+
 
 ##############  Raw data  ###################
 
@@ -40,13 +42,17 @@ def update_cve_report_data_files():
     # nvd_cves = get_cve_list_from_vulners_collection("cve", cve_year_regex)
     print("Processing NVD data...")
     start = time.time()
-    nvd_cves = functions_nvd.get_nvd_cves_from_nvd_site()
+    nvd_cves, nvd_objects = functions_nvd.get_nvd_cves_from_nvd_site()
     end = time.time()
-    print(len(nvd_cves))
-    print(str(int(end)-int(start)) + " s")
     f = open("data/report_data/nvd_cves.json", "w")
     f.write(json.dumps(list(nvd_cves)))
     f.close()
+    f = open("data/report_data/nvd_objects.json", "w")
+    f.write(json.dumps(nvd_objects))
+    f.close()
+    print(len(nvd_cves))
+    print(str(int(end)-int(start)) + " s")
+
 
     # Nessus data I get from Vulners collection
     print("Processing Nessus data...")
@@ -59,12 +65,27 @@ def update_cve_report_data_files():
     f.write(json.dumps(list(nessus_cves)))
     f.close()
 
-def get_filtered_cves(report_data_name, cve_regexp):
+def get_filtered_cves(report_data_name, cve_set):
     f = open("data/report_data/" + report_data_name, "r")
     all_cves = json.loads(f.read())
     f.close()
     cves = set()
     for cve_id in all_cves:
-        if re.findall(cve_regexp, cve_id):
+        if cve_id in cve_set:
             cves.add(cve_id)
     return(cves)
+
+def get_cve_set(profile):
+    if profile['name'] == "CISA Known Exploited":
+        cves = functions_cve_sets.get_cisa_known_exploited_vulnerabilitie_cve_list(profile['vulnerabilities_json'])
+    if profile['name'] == "Published in 2021":
+        cves = functions_cve_sets.get_cves_published_year("2021")
+    return(cves)
+
+def get_cve_comment(cve_id, profile):
+    if profile['name'] == "CISA Known Exploited":
+        for line in profile['vulnerabilities_json']['vulnerabilities']:
+            if line['cveID'] == cve_id:
+                return(cve_id + " - " + line['vulnerabilityName'])
+    else:
+        return (cve_id)

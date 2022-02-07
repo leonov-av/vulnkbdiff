@@ -38,16 +38,23 @@ def get_cve_objects_dict(filename_regex="UNKNOWN", filenames = [], ignore_reject
                             cve_objects[cve['cve']['CVE_data_meta']['ID']] = cve
     return cve_objects
 
+import datetime
+def get_ts_from_cve_date(cve_date):
+    return( int( datetime.datetime.strptime(re.sub("T.*","",cve_date),"%Y-%m-%d" ).timestamp() ) )
+
 # Get CVE IDs from the NVD files
 def get_nvd_cves_from_nvd_site(cve_year_regex=".*"):
     nvd_cves = set()
+    nvd_objects = dict()
     file_list = os.listdir("data/nvd_feeds/")
     file_list.sort()
     for file_name in file_list:
+        print(file_name)
         if os.path.isfile(os.path.join("data/nvd_feeds/", file_name)):
             objects = get_cve_objects_dict(filenames=[file_name], ignore_rejected=True)
             for cve_id in objects:
                 # print(cve_id)
                 if re.findall(cve_year_regex, cve_id):
                     nvd_cves.add(cve_id)
-    return(nvd_cves)
+                    nvd_objects[cve_id] = {'published_ts': get_ts_from_cve_date(objects[cve_id]['publishedDate'])}
+    return(nvd_cves, nvd_objects)
