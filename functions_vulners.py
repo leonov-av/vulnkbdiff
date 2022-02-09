@@ -57,9 +57,9 @@ def get_cve_list_from_vulners_collection(collection_name, cve_year_regex=".*"):
 
 # Getting CVE ID from the Vulners collection
 def get_cve_list_from_vulners_collection_raw_text(collection_name, cve_year_regex=".*"):
-    # print("Extractacting data/vulners_collections/" + collection_name + ".zip")
-    # with zipfile.ZipFile("data/vulners_collections/" + collection_name + ".zip", "r") as zip_ref:
-    #     zip_ref.extractall("data/" + collection_name + "_plugins/")
+    print("Extractacting data/vulners_collections/" + collection_name + ".zip")
+    with zipfile.ZipFile("data/vulners_collections/" + collection_name + ".zip", "r") as zip_ref:
+        zip_ref.extractall("data/" + collection_name + "_plugins/")
     f = open("data/" + collection_name + "_plugins/" + collection_name + ".json" , "r")
     line = f.readline()
     all_cves = set()

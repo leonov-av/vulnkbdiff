@@ -54,6 +54,13 @@ def make_nvd_nessus_openvas_report(profile):
     set_three_name = "NVD"
     set_three_color = '#FF8000'
 
+    # not_2021 = set()
+    # for cve in nvd_cves:
+    #     if not "CVE-2021-" in cve:
+    #         not_2021.add(cve)
+    # print(len(nvd_cves))
+    # print(len(not_2021))
+
     start = time.time()
     plt.figure(figsize=(6, 6))
     v = venn2(subsets=[set_one, set_two],
@@ -70,9 +77,6 @@ def make_nvd_nessus_openvas_report(profile):
 
     start = time.time()
     plt.figure(figsize=(6, 6))
-    print(len(set_one))
-    print(len(set_two))
-    print(len(set_three))
 
     v = venn3(subsets=[set(set_one), set(set_two), set(set_three)],
               set_labels=(set_one_name, set_two_name, set_three_name),
@@ -87,12 +91,8 @@ def make_nvd_nessus_openvas_report(profile):
     print(len(nessus_cves))
     print(str(int(end) - int(start)) + " s")
 
-
     start = time.time()
     plt.figure(figsize=(6, 6))
-    print(len(set_one))
-    print(len(set_two))
-    print(len(set_three))
 
     v = venn3_unweighted(subsets=[set(set_one), set(set_two), set(set_three)],
               set_labels=(set_one_name, set_two_name, set_three_name),
@@ -150,17 +150,35 @@ def make_nvd_nessus_openvas_report(profile):
             report.append("<li>" + functions_reports.get_cve_comment(cve_id, profile) +  "</li>")
         report.append("</ul>")
 
+    if profile['name'] == "Published in 2021":
+        vulristics_task_cve_2021_comment = list()
+        vulristics_task_cve_2021_list = list()
+        for cve_id in not_nessus_and_openvas:
+            vulristics_task_cve_2021_comment.append("Status|" + cve_id +" is not detected by Nessus and OpenVAS")
+            vulristics_task_cve_2021_list.append(cve_id)
+        for cve_id in only_openvas:
+            vulristics_task_cve_2021_comment.append("Status|" + cve_id +" is detected by OpenVAS")
+            vulristics_task_cve_2021_list.append(cve_id)
+        report_text = "\n".join(vulristics_task_cve_2021_comment)
+        f = open("reports/vulristics_task_cve_2021_comment.txt", "w")
+        f.write(report_text)
+        f.close()
+        report_text = "\n".join(vulristics_task_cve_2021_list)
+        f = open("reports/vulristics_task_cve_2021_list.txt", "w")
+        f.write(report_text)
+        f.close()
+
 
     report_text = "\n".join(report)
     f = open("reports/" + report_name, "w")
     f.write(report_text)
     f.close()
 
-# ## Update Raw data
-# functions_reports.update_raw_data()
-#
-# # Update CVE Vulners Collection
-# functions_reports.update_cve_report_data_files();
+## Update Raw data
+functions_reports.update_raw_data()
+
+# Update CVE Vulners Collection
+functions_reports.update_cve_report_data_files();
 
 
 profile = dict()
